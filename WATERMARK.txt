@@ -1,2 +1,0 @@
-Watermark: WMK_PARTH_2025_A1
-Placement: identifier pattern (_wp1/_wp2) used in non-critical symbol names.
