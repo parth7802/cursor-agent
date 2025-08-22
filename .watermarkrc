@@ -1,0 +1,4 @@
+pattern=_px27|px_
+min_occurrences=6
+paths=src,lib,app
+extensions=.py,.js,.ts,.go,.java,.php
