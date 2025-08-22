@@ -20,8 +20,9 @@ def is_dockerfile(fname):
     return fname == 'Dockerfile' or fname.endswith('.Dockerfile')
 
 def insert_watermark(file_path, watermark):
-    _, ext = os.path.splitext(file_path)
-    base = os.path.basename(file_path)
+    _, ext = os.path.splitext(file_path)  # Fixed: removed *, added _
+    base = os.path.basename(file_path)    # Fixed: removed * from file*path
+    
     # Determine comment syntax
     if is_dockerfile(base):
         cmt = '#'
@@ -34,13 +35,15 @@ def insert_watermark(file_path, watermark):
             wm_line = f"{cmt} {watermark}\n"
     else:
         return
-
+    
     # Read file and check for existing watermark
     try:
         with open(file_path, "r", encoding="utf8") as f:
             lines = f.readlines()
+        
         if any(watermark in line for line in lines[:5]):
             return
+        
         # Insert at top
         new_lines = [wm_line] + lines
         with open(file_path, "w", encoding="utf8") as f:
@@ -56,7 +59,7 @@ def scan_and_watermark(root, watermark):
             if ext in EXTENSIONS or is_dockerfile(fname):
                 insert_watermark(os.path.join(dirpath, fname), watermark)
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # Fixed: removed ** formatting
     # Allow override of watermark string from command line
     watermark = sys.argv[1] if len(sys.argv) > 1 else WATERMARK
     # Allow override of directory to scan (defaults to current dir)
