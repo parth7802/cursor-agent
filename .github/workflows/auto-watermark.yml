@@ -1,0 +1,27 @@
+name: Auto Watermark
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  watermark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Insert watermark in all files
+        env:
+          WATERMARK_STRING: ${{ secrets.WATERMARK_STRING }}
+        run: |
+          python scripts/insert_watermark.py "${WATERMARK_STRING:-WATERMARK-REPO-DEFAULT}" .
+      - name: Commit changes (if any)
+        run: |
+          git config user.name "parth7802"
+          git config user.email "ppatel7802@gmail.com"
+          git add .
+          git diff --cached --quiet || git commit -m "chore: auto-insert watermark"
+          git push
