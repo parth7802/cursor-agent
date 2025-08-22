@@ -6,12 +6,15 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   watermark:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -21,10 +24,11 @@ jobs:
           WATERMARK_STRING: ${{ secrets.WATERMARK_STRING }}
         run: |
           python scripts/insert_watermark.py "${WATERMARK_STRING:-WATERMARK-REPO-DEFAULT}" .
-      - name: Commit changes (if any)
-        run: |
-          git config user.name "parth7802"
-          git config user.email "ppatel7802@gmail.com"
-          git add .
-          git diff --cached --quiet || git commit -m "chore: auto-insert watermark"
-          git push
+      - name: Create Pull Request for Watermark Changes
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore: auto-insert watermark"
+          title: "chore: auto-insert watermark"
+          body: "Automated watermark insertion/update."
+          branch: "auto/watermark-update"
+          base: main
